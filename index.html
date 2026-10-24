@@ -496,13 +496,29 @@ class Component extends DCLogic {
     if (!/^0[5-7]\d{8}$/.test(ph)) return this.setState({ err: 'Numéro invalide : 10 chiffres commençant par 05, 06 ou 07.' });
     if (!f.wilaya) return this.setState({ err: 'Choisissez votre wilaya.' });
     if (!f.commune) return this.setState({ err: 'Choisissez votre commune.' });
-    const fee = this.shipFee() || 0;
-    const order = { produit: 'Brosse Liva', quantite: this.state.qty, prix: this.price(this.state.qty), livraison: this.state.ship === 'desk' ? 'Stop desk' : 'Domicile', frais_livraison: fee, total: this.price(this.state.qty) + fee, ...f, date: new Date().toISOString() };
-    // ENVOI COMMANDE : renseigner l'URL (Google Sheets, Shopify, API...) dans la prop orderEndpoint
-    const url = this.props.orderEndpoint;
-    if (url) { try { await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(order) }); } catch (_) {} }
-    // PIXEL META : fbq('track', 'Purchase', { value: order.total, currency: 'DZD' });
-    this.setState({ ordered: true, err: '' });
+    // Redirection vers checkout Shopify avec le produit et les coordonnees pre-remplies
+    const SHOP = 'i4fkf5-au.myshopify.com';
+    const VARIANT_ID = '57906567414140';
+    const qty = this.state.qty;
+    const livraison = this.state.ship === 'desk' ? 'Stop desk' : 'Domicile';
+    const nameParts = f.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+    const params = new URLSearchParams();
+    params.set('checkout[shipping_address][first_name]', firstName);
+    params.set('checkout[shipping_address][last_name]', lastName);
+    params.set('checkout[shipping_address][phone]', '+213' + ph.replace(/^0/, ''));
+    params.set('checkout[shipping_address][address1]', f.address);
+    params.set('checkout[shipping_address][address2]', f.commune);
+    params.set('checkout[shipping_address][city]', f.wilaya);
+    params.set('checkout[shipping_address][country]', 'Algeria');
+    params.set('attributes[Wilaya]', f.wilaya);
+    params.set('attributes[Commune]', f.commune);
+    params.set('attributes[Mode de livraison]', livraison);
+    params.set('attributes[Telephone]', ph);
+    const url = 'https://' + SHOP + '/cart/' + VARIANT_ID + ':' + qty + '?' + params.toString();
+    // PIXEL META : fbq('track', 'InitiateCheckout', { value: this.price(qty), currency: 'DZD' });
+    window.location.href = url;
   }
 
   shipFee() {
