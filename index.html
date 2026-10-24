@@ -68,7 +68,7 @@ input,select,textarea,button{font-family:inherit}
   <div style="max-width:1200px;margin:0 auto;width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(24px,5vw,72px)">
     <div style="flex:1 1 360px;min-width:0;position:relative;display:flex;justify-content:center">
       <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(88%,460px);aspect-ratio:1/1;border-radius:50%;background:#FBE6F1;display:block"></span>
-      <img src="assets/liva/packshot.webp" alt="Brosse lissante chauffante sans fil Liva" style="position:relative;width:min(100%,400px);height:auto;display:block;mix-blend-mode:multiply">
+      <img src="assets/liva/packshot.webp" alt="Brosse lissante chauffante sans fil Liva" style="position:relative;width:min(100%,400px);height:auto;display:block">
       <span style="position:absolute;left:0;top:8%;background:#0A0A0A;color:#fff;font-weight:700;font-size:13px;letter-spacing:.04em;padding:9px 14px;border-radius:999px">Offre duo : 2 pour {{ p2 }}</span>
     </div>
     <div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:20px">
@@ -132,25 +132,15 @@ input,select,textarea,button{font-family:inherit}
       <h2 style="margin:0;font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(32px,4.4vw,56px);line-height:1.02;letter-spacing:-.035em">La différence en 5 minutes</h2>
       <p dir="rtl" lang="ar" style="margin:0;font-family:'Tajawal',sans-serif;font-weight:500;font-size:20px;color:#5E5560">الفرق ف 5 دقايق</p>
     </div>
-    <div data-reveal="" style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(8px,2vw,24px);align-items:center">
-      <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
-        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(16px,1.6vw,22px);letter-spacing:.08em">AVANT</span>
-        <div style="position:relative;width:100%;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#E9E2E6">
-          <image-slot id="liva-avant" shape="rect" placeholder="Photo AVANT à insérer"></image-slot>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:36px">
-        <span style="width:2px;height:48px;background-image:linear-gradient(#C9BCC4 50%,transparent 50%);background-size:2px 8px;display:block"></span>
+    <div data-reveal="" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div style="display:flex;align-items:center;gap:12px">
         <span style="width:clamp(40px,5vw,56px);height:clamp(40px,5vw,56px);border-radius:50%;background:#D6127F;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(214,18,127,.3)">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
         </span>
-        <span style="width:2px;height:48px;background-image:linear-gradient(#C9BCC4 50%,transparent 50%);background-size:2px 8px;display:block"></span>
+        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(18px,2vw,26px);letter-spacing:.08em;color:#D6127F">LE RÉSULTAT</span>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
-        <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:clamp(16px,1.6vw,22px);letter-spacing:.08em;color:#D6127F">APRÈS</span>
-        <div style="position:relative;width:100%;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:#E9E2E6">
-          <img src="assets/liva/apres.webp" alt="Cheveux lisses après la brosse Liva" style="width:100%;height:100%;object-fit:cover;display:block">
-        </div>
+      <div style="position:relative;width:100%;max-width:720px;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#E9E2E6;box-shadow:0 20px 48px rgba(0,0,0,.12)">
+        <img src="assets/liva/apres.webp" alt="Cheveux lisses après la brosse Liva" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
   </div>
@@ -565,7 +555,7 @@ class Component extends DCLogic {
       communeOptions: [React.createElement('option', { key: 'x', value: '', disabled: true }, s.f.wilaya ? 'Commune' : "Commune (choisissez d'abord la wilaya)")].concat((s.geo && s.f.wilaya ? (s.geo.communes[parseInt(s.f.wilaya, 10)] || []) : []).map(n => React.createElement('option', { key: n, value: n }, n))),
       hasErr: !!s.err, err: s.err,
       filters: filterDefs.map(([k, l]) => ({ label: l, active: s.filter === k, color: s.filter === k ? '#fff' : '#0A0A0A', pick: () => this.setState({ filter: k }) })),
-      reviews: filtered.map(r => { const i = this.revs.indexOf(r); return { ...r, ...this.stars(r.s), initial: r.n[0], hasImg: i < 4, img: i < 4 ? 'assets/liva/avis-' + (i + 1) + '.png' : '' }; }),
+      reviews: filtered.map(r => { return { ...r, ...this.stars(r.s), initial: r.n[0], hasImg: false, img: '' }; }),
       faqs: this.faqData.map(([q, a], i) => ({ q, a, open: s.faq === i, openStr: String(s.faq === i), sign: s.faq === i ? '−' : '+', toggle: () => this.setState({ faq: s.faq === i ? null : i }) })),
       notSent: !s.sent, sent: s.sent,
       cName: s.c.name, cEmail: s.c.email, cMsg: s.c.msg,
